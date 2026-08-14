@@ -40,20 +40,110 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. HERO SECTION: INTERACTIVE DECK HOVER LINKAGE
+    // 4. HERO SECTION: INTERACTIVE DECK HOVER LINKAGE & DYNAMIC GLOWS
     const deckCards = document.querySelectorAll('.deck-card');
+    const heroGlow = document.querySelector('.hero-section .ambient-glow');
+
+    const leverColors = {
+        acquisition: {
+            glow: 'rgba(255, 85, 0, 0.22)',
+            border: '#ff5500',
+            bg: 'rgba(38, 12, 5, 0.98)',
+            shadow: '0 25px 60px rgba(255, 85, 0, 0.28)',
+            iconBg: 'rgba(255, 85, 0, 0.15)'
+        },
+        content: {
+            glow: 'rgba(255, 30, 100, 0.22)',
+            border: '#ff1e64',
+            bg: 'rgba(38, 5, 18, 0.98)',
+            shadow: '0 25px 60px rgba(255, 30, 100, 0.28)',
+            iconBg: 'rgba(255, 30, 100, 0.15)'
+        },
+        conversion: {
+            glow: 'rgba(255, 0, 0, 0.22)',
+            border: '#ff0000',
+            bg: 'rgba(38, 5, 5, 0.98)',
+            shadow: '0 25px 60px rgba(255, 0, 0, 0.28)',
+            iconBg: 'rgba(255, 0, 0, 0.15)'
+        },
+        crm: {
+            glow: 'rgba(255, 140, 0, 0.22)',
+            border: '#ff8c00',
+            bg: 'rgba(38, 20, 5, 0.98)',
+            shadow: '0 25px 60px rgba(255, 140, 0, 0.28)',
+            iconBg: 'rgba(255, 140, 0, 0.15)'
+        },
+        automation: {
+            glow: 'rgba(0, 230, 255, 0.22)',
+            border: '#00e6ff',
+            bg: 'rgba(5, 32, 38, 0.98)',
+            shadow: '0 25px 60px rgba(0, 230, 255, 0.28)',
+            iconBg: 'rgba(0, 230, 255, 0.15)'
+        },
+        data: {
+            glow: 'rgba(130, 0, 255, 0.22)',
+            border: '#8200ff',
+            bg: 'rgba(20, 5, 38, 0.98)',
+            shadow: '0 25px 60px rgba(130, 0, 255, 0.28)',
+            iconBg: 'rgba(130, 0, 255, 0.15)'
+        }
+    };
+
     deckCards.forEach(card => {
         const targetName = card.getAttribute('data-lever-target');
+        const theme = leverColors[targetName];
         
         card.addEventListener('mouseenter', () => {
+            // Apply card-specific variables on hover
+            if (theme) {
+                card.style.setProperty('--card-glow-color', theme.border);
+                card.style.setProperty('--card-glow-bg', theme.bg);
+                card.style.setProperty('--card-glow-shadow', theme.shadow);
+                card.style.setProperty('--card-glow-icon', theme.iconBg);
+                
+                // Change background ambient glow dynamically
+                if (heroGlow) {
+                    heroGlow.style.setProperty('--hero-glow', theme.glow);
+                }
+            }
+
             // Highlight matching funnel step visual in Leviers section
             const matchingStep = document.querySelector(`.funnel-step-visual[data-step="${targetName}"]`);
             if (matchingStep) matchingStep.classList.add('active');
         });
         
         card.addEventListener('mouseleave', () => {
+            // Reset dynamic variables
+            card.style.removeProperty('--card-glow-color');
+            card.style.removeProperty('--card-glow-bg');
+            card.style.removeProperty('--card-glow-shadow');
+            card.style.removeProperty('--card-glow-icon');
+
+            if (heroGlow) {
+                heroGlow.style.removeProperty('--hero-glow');
+            }
+
             const matchingStep = document.querySelector(`.funnel-step-visual[data-step="${targetName}"]`);
             if (matchingStep) matchingStep.classList.remove('active');
+        });
+
+        // Click to Scroll & Pulse target card below
+        card.addEventListener('click', () => {
+            const targetSection = document.getElementById('leviers');
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Smooth delay to wait for scrolling completion before pulsing target card
+                setTimeout(() => {
+                    const targetCard = document.querySelector(`.lever-card[data-lever-target="${targetName}"]`);
+                    if (targetCard) {
+                        targetCard.classList.add('highlight-pulse');
+                        setTimeout(() => {
+                            targetCard.classList.remove('highlight-pulse');
+                        }, 1300);
+                    }
+                }, 750);
+            }
         });
     });
 
