@@ -632,9 +632,15 @@ img {
         min-height: 230px;
         margin: 0 !important;
         transform: none !important;
+        animation: none !important;
     }
     .deck-card:hover {
         transform: translateY(-10px) scale(1.03) !important;
+    }
+    /* En responsive : placer l'étiquette vidéo (Content) à la fin */
+    .deck-card-2,
+    .deck-card[data-lever-target="content"] {
+        order: 10;
     }
 }
 
